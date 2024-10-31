@@ -6,7 +6,11 @@ namespace Poc.CRM.EfExtensible.Web.Features.Companies;
 
 public interface ICreateCompany : ICommand
 {
-    public record Command(string Name);
+    public record Command
+    {
+        public string Name { get; init; }
+        public Dictionary<string, object>? AdditionalFields { get; init; } = null;
+    };
 
     public Task<Result<Guid>> Create(Command command);
 }
@@ -20,6 +24,14 @@ class CreateCompanyHandler(CrmDbContext context) : ICreateCompany
             Name = command.Name
         };
         context.Companies.Add(dto);
+        if (command.AdditionalFields != null)
+        {
+            foreach (var field in command.AdditionalFields)
+            {
+                context.Entry(dto).Property(field.Key).CurrentValue = field.Value;
+            }
+        }
+
         await context.SaveChangesAsync();
 
         return Result<Guid>.Succeed(dto.Id);

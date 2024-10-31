@@ -1,4 +1,3 @@
-using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Poc.CRM.EfExtensible.Web.Features.Companies;
 using Poc.CRM.EfExtensible.Web.Infrastructure.Models;
@@ -13,14 +12,19 @@ public class CreateCompanyTests:TestFixture
     {
         var result = await Provider
             .GetRequiredService<ICreateCompany>()
-            .Create(new ICreateCompany.Command("Jack & Russel Co."));
-        result.Should().Succeed();
+            .Create(new ICreateCompany.Command()
+            {
+                Name = "Jack & Russel Co."
+            });
+
+    result.Should().Succeed();
         
         InAnotherScope();
 
         var details = await Provider.GetRequiredService<IGetCompanyDetails>()
             .Get(result.Data);
-        ;
+        
+        
         details.Should().SucceedWith(new IGetCompanyDetails.Model()
         {
             Name = "Jack & Russel Co.",

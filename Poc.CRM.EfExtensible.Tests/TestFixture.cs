@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Poc.CRM.EfExtensible.Web.Features;
 using Poc.CRM.EfExtensible.Web.Infrastructure;
@@ -9,7 +11,9 @@ namespace Poc.CRM.EfExtensible.Tests;
 
 public class TestFixture
 {
+#pragma warning disable NUnit1032
     private MsSqlContainer _container;
+#pragma warning restore NUnit1032
     private Respawner _respawner;
 
     protected IServiceProvider Provider;
@@ -23,18 +27,25 @@ public class TestFixture
     [OneTimeSetUp]
     public async Task OneTimeSetup()
     {
-        _container = new MsSqlBuilder().Build();
-        await _container.StartAsync();
+        _container = new MsSqlBuilder()
+            .WithReuse(true)
+            .Build();
     }
 
     [SetUp]
     public async Task Setup()
     {
+        await _container.StartAsync();
         var services = new ServiceCollection();
         services.AddDomain();
-
-        services.AddDbContext<CrmDbContext>(o => o.UseSqlServer(_container.GetConnectionString()));
-
+        services.AddSingleton<MetaModel>();
+        services
+            .AddDbContext<CrmDbContext>(o =>
+                o
+                    .UseSqlServer(_container.GetConnectionString())
+                    .ReplaceService<IModelCacheKeyFactory, MetamodelAwareCacheKeyFactory>()
+            );
+        
         _rootProvider = services.BuildServiceProvider();
 
         using var scope = _rootProvider.CreateScope();
@@ -50,6 +61,7 @@ public class TestFixture
     {
         await _rootProvider.DisposeAsync();
         await _respawner.ResetAsync(_container.GetConnectionString());
+        await _container.StopAsync();
     }
 
     [OneTimeTearDown]

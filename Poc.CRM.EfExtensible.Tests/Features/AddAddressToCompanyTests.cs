@@ -26,7 +26,10 @@ public class AddAddressToCompanyTests : TestFixture
     {
         var createCompanyResult = await Provider
             .GetRequiredService<ICreateCompany>()
-            .Create(new ICreateCompany.Command("Jack & Russel Co."));
+            .Create(new ICreateCompany.Command
+            {
+                Name = "Jack & Russel Co."
+            });
         createCompanyResult.Should().Succeed();
 
         InAnotherScope();
@@ -52,7 +55,8 @@ public class AddAddressToCompanyTests : TestFixture
             Name = "Jack & Russel Co.",
             Address = "London, SW1A 1AA, 10 Downing Street",
             CompanyKind = Company.CompanyKind.Unknown,
-            Contacts = []
+            Contacts = [],
+            AdditionalFields = {}
         });
     }
 }
