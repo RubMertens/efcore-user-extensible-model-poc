@@ -1,0 +1,6 @@
+@Poc.CRM.EfExtensible.Web_HostAddress = http://localhost:5038
+
+GET {{Poc.CRM.EfExtensible.Web_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
