@@ -6,7 +6,6 @@ namespace Poc.CRM.EfExtensible.Tests.Features;
 
 public class CreateCompanyTests:TestFixture
 {
-
     [Test]
     public async Task ShouldCreateCompany()
     {

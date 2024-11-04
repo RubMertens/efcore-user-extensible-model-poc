@@ -13,6 +13,7 @@ public class CrmDbContext(DbContextOptions<CrmDbContext> options, MetaModel meta
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(CrmDbContext).Assembly);
         MetaModel.ApplyChanges(modelBuilder);
     }
 

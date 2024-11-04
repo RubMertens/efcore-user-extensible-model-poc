@@ -54,8 +54,6 @@ public class AddFieldToCompanyHandler(CrmDbContext context) : IAddFieldToCompany
             MaxLength = command.MaxLength
         };
         context.MetaModel.Fields.Add(additionalField);
-
-
         var companyTableName = companyEntityType.GetTableName();
 
         var typeMappingSource = context.GetInfrastructure().GetRequiredService<IRelationalTypeMappingSource>();

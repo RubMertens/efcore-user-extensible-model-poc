@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
 namespace Poc.CRM.EfExtensible.Web.Infrastructure.Models;
 
 public class Company
@@ -14,5 +17,12 @@ public class Company
         Customer,
         Supplier,
         Vendor,
+    }
+}
+
+public class CompanyEntityTypeConfiguration: IEntityTypeConfiguration<Company>
+{
+    public void Configure(EntityTypeBuilder<Company> builder)
+    {
     }
 }
