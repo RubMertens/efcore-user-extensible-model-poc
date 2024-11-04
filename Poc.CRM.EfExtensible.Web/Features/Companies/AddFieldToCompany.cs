@@ -43,7 +43,8 @@ public class AddFieldToCompanyHandler(CrmDbContext context) : IAddFieldToCompany
 
     public async Task<Result<int>> AddField(IAddFieldToCompany.Command command)
     {
-        var companyEntityType = context.Model.FindEntityType(typeof(Company)) ?? throw new InvalidOperationException();
+        var companyEntityType = context.Model.FindEntityType(typeof(CompanyMetaModel)) ??
+                                throw new InvalidOperationException();
 
         var additionalField = new AdditionalField
         {
@@ -58,7 +59,6 @@ public class AddFieldToCompanyHandler(CrmDbContext context) : IAddFieldToCompany
 
         var typeMappingSource = context.GetInfrastructure().GetRequiredService<IRelationalTypeMappingSource>();
         RelationalTypeMapping? mapping = typeMappingSource.FindMapping(additionalField.PropertyType);
-
 
         var columnSqlPart = command.FieldType switch
         {
@@ -102,7 +102,7 @@ public class AddFieldToCompanyHandler(CrmDbContext context) : IAddFieldToCompany
 
         var nullOrNotNull = command.IsRequired ? $"NOT NULL" : $"NULL";
         var defaultOrNot = command.DefaultValue != null ? $"DEFAULT('{command.DefaultValue}')" : "";
-        
+
         return $"add [{command.FieldName}] {storeType} {nullOrNotNull} {defaultOrNot};";
     }
 }

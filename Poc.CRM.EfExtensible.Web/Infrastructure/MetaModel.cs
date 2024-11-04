@@ -6,12 +6,14 @@ namespace Poc.CRM.EfExtensible.Web.Infrastructure;
 
 public class MetaModel
 {
+    public const string MetaKey = "MetaModel";
     public int Version { get; set; }
     public List<AdditionalField> Fields { get; set; } = new();
     public List<AdditionalField> ForEntity<T>()
     {
         return Fields.Where(f => f.EntityName == typeof(T).FullName).ToList();
     }
+
     public void ApplyChanges(ModelBuilder modelBuilder)
     {
         var fieldsByEntity = Fields.GroupBy(f => f.EntityName);

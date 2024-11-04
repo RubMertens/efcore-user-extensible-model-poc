@@ -21,14 +21,15 @@ class CreateCompanyHandler(CrmDbContext context) : ICreateCompany
     {
         var dto = new Company()
         {
-            Name = command.Name
+            Name = command.Name,
+            Meta = new CompanyMetaModel()
         };
         context.Companies.Add(dto);
         if (command.AdditionalFields != null)
         {
             foreach (var field in command.AdditionalFields)
             {
-                context.Entry(dto).Property(field.Key).CurrentValue = field.Value;
+                context.Entry(dto.Meta).Property(field.Key).CurrentValue = field.Value;
             }
         }
 

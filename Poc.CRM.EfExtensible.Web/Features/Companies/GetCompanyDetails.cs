@@ -29,18 +29,19 @@ public class GetCompanyDetailsHandler(CrmDbContext context) : IGetCompanyDetails
         var company = await context.Companies
             .Include(c => c.Contacts)
             .Include(company => company.Address)
+            .Include(c => c.Meta)
             .FirstOrDefaultAsync(c => c.Id == id);
         if (company == null)
         {
             return Result<IGetCompanyDetails.Model>.Fail(new IGetCompanyDetails.NotFound());
         }
 
-        var definedAdditionalFieldsForCompany = context.MetaModel.ForEntity<Company>();
+        var definedAdditionalFieldsForCompany = context.MetaModel.ForEntity<CompanyMetaModel>();
 
         var additionalFields = new Dictionary<string, object>();
         foreach (var field in definedAdditionalFieldsForCompany)
         {
-            var value = context.Entry(company).Property(field.PropertyName).CurrentValue;
+            var value = context.Entry(company.Meta).Property(field.PropertyName).CurrentValue;
             if (value != null)
                 additionalFields[field.PropertyName] = value;
         }
