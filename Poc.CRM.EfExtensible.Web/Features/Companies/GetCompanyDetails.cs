@@ -6,8 +6,15 @@ using Poc.CRM.EfExtensible.Web.Infrastructure.Models;
 
 namespace Poc.CRM.EfExtensible.Web.Features.Companies;
 
+/// <summary>
+/// Retrieve the details for a company. This includes the name, address, contacts, and any additional fields.
+/// Can return a NotFound error if the company does not exist.
+/// </summary>
 public interface IGetCompanyDetails : ICommand
 {
+    /// <summary>
+    /// Returned if the company does not exist.
+    /// </summary>
     public record NotFound() : DomainError("Company not found");
 
     public record Model
@@ -31,6 +38,7 @@ public class GetCompanyDetailsHandler(CrmDbContext context) : IGetCompanyDetails
             .Include(company => company.Address)
             .Include(c => c.Meta)
             .FirstOrDefaultAsync(c => c.Id == id);
+
         if (company == null)
         {
             return Result<IGetCompanyDetails.Model>.Fail(new IGetCompanyDetails.NotFound());
@@ -41,11 +49,11 @@ public class GetCompanyDetailsHandler(CrmDbContext context) : IGetCompanyDetails
         var additionalFields = new Dictionary<string, object>();
         foreach (var field in definedAdditionalFieldsForCompany)
         {
+            // Get the value of the field from the entity and add it to the returned query model.
             var value = context.Entry(company.Meta).Property(field.PropertyName).CurrentValue;
             if (value != null)
                 additionalFields[field.PropertyName] = value;
         }
-
 
         return Result<IGetCompanyDetails.Model>.Succeed(new IGetCompanyDetails.Model
         {

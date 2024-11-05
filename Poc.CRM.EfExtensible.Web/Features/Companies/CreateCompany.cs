@@ -4,8 +4,17 @@ using Poc.CRM.EfExtensible.Web.Infrastructure.Models;
 
 namespace Poc.CRM.EfExtensible.Web.Features.Companies;
 
+/// <summary>
+/// Creates a new company with any additional fields.
+/// </summary>
 public interface ICreateCompany : ICommand
 {
+    static class Errors
+    {
+        public static DomainError AdditionalFieldDoesNotExist(string fieldName) =>
+            new($"Field {fieldName} does not exist");
+    }
+
     public record Command
     {
         public string Name { get; init; }
@@ -27,9 +36,15 @@ class CreateCompanyHandler(CrmDbContext context) : ICreateCompany
         context.Companies.Add(dto);
         if (command.AdditionalFields != null)
         {
+            //dynamically set the additional fields
+            //if the property does not exist, it will fail
             foreach (var field in command.AdditionalFields)
             {
-                context.Entry(dto.Meta).Property(field.Key).CurrentValue = field.Value;
+                var entry = context.Entry(dto.Meta);
+                var property = entry.Metadata.FindProperty(field.Key);
+                if (property == null)
+                    return Result<Guid>.Fail(ICreateCompany.Errors.AdditionalFieldDoesNotExist(field.Key));
+                entry.Property(property).CurrentValue = field.Value;
             }
         }
 

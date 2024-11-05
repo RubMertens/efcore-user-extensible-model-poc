@@ -11,13 +11,19 @@ public static class Dependencies
         services.RegisterHandlerInCurrentAssembly();
         return services;
     }
-    
+
     private static IServiceCollection RegisterHandlerInCurrentAssembly(this IServiceCollection services)
     {
         return services.RegisterHandlersInAssembly(Assembly.GetCallingAssembly());
     }
 
 
+    /// <summary>
+    /// Registers all ICommand interfaces and their matching handler implementations in the given assembly.
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="assembly"></param>
+    /// <returns></returns>
     private static IServiceCollection RegisterHandlersInAssembly(this IServiceCollection services, Assembly assembly)
     {
         var commandInterfaces = assembly.GetTypes()

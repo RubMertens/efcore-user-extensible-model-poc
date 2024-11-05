@@ -15,7 +15,7 @@ public class Contact
     public List<Company> Companies { get; set; }
 }
 
-public class ContactEntityTypeConfiguration:IEntityTypeConfiguration<Contact>
+public class ContactEntityTypeConfiguration:IEntityTypeConfiguration<Contact>, ICrmEntityTypeConfiguration
 {
     public void Configure(EntityTypeBuilder<Contact> builder)
     {

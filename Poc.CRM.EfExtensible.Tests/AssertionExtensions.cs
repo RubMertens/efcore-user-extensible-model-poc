@@ -9,6 +9,11 @@ public static class ResultExtensions
     public static ResultAssertions<T> Should<T>(this Result<T> result) => new(result);
 }
 
+/// <summary>
+/// Assertion for Result object
+/// </summary>
+/// <param name="result"></param>
+/// <typeparam name="T"></typeparam>
 public class ResultAssertions<T>(Result<T> result) : ReferenceTypeAssertions<Result<T>, ResultAssertions<T>>(result)
 {
     protected override string Identifier { get; } = "Result";
@@ -24,13 +29,14 @@ public class ResultAssertions<T>(Result<T> result) : ReferenceTypeAssertions<Res
 
         return new AndConstraint<ResultAssertions<T>>(this);
     }
+
     public AndConstraint<ResultAssertions<T>> Succeed()
     {
         result.Success.Should().BeTrue();
         return new AndConstraint<ResultAssertions<T>>(this);
     }
 
-    public AndConstraint<ResultAssertions<T>> FailWith(DomainError error) 
+    public AndConstraint<ResultAssertions<T>> FailWith(DomainError error)
     {
         result.Success.Should().BeFalse();
         result.Data.Should().Be(default(T));

@@ -1,5 +1,10 @@
 namespace Poc.CRM.EfExtensible.Web.Application;
 
+/// <summary>
+/// Result object commonly returned by handlers to indicate success or failure.
+/// Static methods are provided to create a successful or failed result.
+/// </summary>
+/// <typeparam name="TResult"></typeparam>
 public class Result<TResult>
 {
     private Result(TResult? data)

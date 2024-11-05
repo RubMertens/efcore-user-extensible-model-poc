@@ -11,10 +11,9 @@ public class Address
     public string[] AddressLines { get; set; }
 }
 
-public class AddressEntityTypeConfiguration: IEntityTypeConfiguration<Address>
+public class AddressEntityTypeConfiguration : IEntityTypeConfiguration<Address>, ICrmEntityTypeConfiguration
 {
     public void Configure(EntityTypeBuilder<Address> builder)
     {
-        
     }
 }

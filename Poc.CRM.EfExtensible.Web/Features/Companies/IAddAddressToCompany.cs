@@ -6,11 +6,14 @@ using Poc.CRM.EfExtensible.Web.Infrastructure.Models;
 
 namespace Poc.CRM.EfExtensible.Web.Features.Companies;
 
+/// <summary>
+/// Adds an adress to a company
+/// </summary>
 public interface IAddAddressToCompany : ICommand
 {
     public static class Errors
     {
-        public static DomainError NotFound() => new("Company not found");    
+        public static DomainError NotFound() => new("Company not found");
     }
 
     record Command
